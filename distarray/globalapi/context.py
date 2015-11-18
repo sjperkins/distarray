@@ -654,8 +654,9 @@ class IPythonContext(BaseContext):
         self.comm = self.make_subcomm(self.targets)
 
         if not BaseContext._CLEANUP:
-            BaseContext._CLEANUP = (atexit.register(ipython_cleanup.clear_all),
+            BaseContext._CLEANUP = (atexit.register(ipython_cleanup.clear_all, self.client),
                                     atexit.register(ipython_cleanup.cleanup_all,
+                                                    self.client,
                                                     '__main__',
                                                     DISTARRAY_BASE_NAME))
 

@@ -25,16 +25,19 @@ def cleanup(view, module_name, prefix):
     view.apply_sync(_cleanup, module_name, prefix)
 
 
-def cleanup_all(module_name, prefix):
+def cleanup_all(client, module_name, prefix):
     """ Connects to all engines and runs ``cleanup()`` on them. """
-    c = IPythonClient()
-    if c is None:
+    if client is None:
+        client = IPythonClient()
+
+    if client is None:
         return
+
     try:
-        v = c[:]
-        cleanup(v, module_name, prefix)
+        view = client[:]
+        cleanup(view, module_name, prefix)
     finally:
-        c.close()
+        client.close()
 
 
 def get_local_keys(view, prefix):
@@ -67,13 +70,17 @@ def clear(view):
 
     return view.apply_async(clear_engine).get_dict()
 
-def clear_all():
-    c = IPythonClient()
-    if c is None:
+def clear_all(client):
+    if client is None:
+        client = IPythonClient()
+
+    if client is None:
         return
+
     try:
-        v = c[:]
-        mods = clear(v)
+        view = client[:]
+        mods = clear(view)
     finally:
-        c.close()
+        client.close()
+        
     return mods
